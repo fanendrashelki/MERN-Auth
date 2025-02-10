@@ -1,0 +1,15 @@
+.ui_input {
+  border: none;
+  outline: none;
+  padding: 0.6rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  transform: all 0.2s;
+}
+.ui_input:hover {
+  border-color: #165ef0;
+}
+
+.ui_input:focus {
+  border-color: #165ef0;
+}

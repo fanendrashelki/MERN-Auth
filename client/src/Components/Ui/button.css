@@ -1,0 +1,18 @@
+.ui_button {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  background-color: #165ef0;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.ui_button:focus {
+  background-color: #014ce2;
+}
+.ui_button:hover {
+  background-color: #014ce2;
+}
