@@ -5,6 +5,7 @@
   border-radius: 5px;
   border: 1px solid #ccc;
   transform: all 0.2s;
+  width: 100%;
 }
 .ui_input:hover {
   border-color: #165ef0;

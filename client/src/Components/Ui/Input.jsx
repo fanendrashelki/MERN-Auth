@@ -1,5 +1,5 @@
 import "./input.css";
-const Input = ({ type, placeholder, value, required, onChange }) => {
+const Input = ({ type, placeholder, value, required, onChange, name }) => {
   return (
     <>
       <input
@@ -9,6 +9,7 @@ const Input = ({ type, placeholder, value, required, onChange }) => {
         required={required}
         onChange={onChange}
         className="ui_input"
+        name={name}
       />
     </>
   );

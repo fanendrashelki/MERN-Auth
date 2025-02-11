@@ -1,77 +1,115 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import BackToLogin from "../Ui/BackToLogin";
 import Button from "../Ui/Button";
 import Input from "../Ui/Input";
 import "./auth.css";
 import { MdOutlineSaveAlt } from "react-icons/md";
+import { ImSpinner } from "react-icons/im";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const changeName = (e) => {
-    setName(e.target.value);
-  };
-  const changeEmail = (e) => {
-    setEmail(e.target.value);
-  };
-  const changePassword = (e) => {
-    setPassword(e.target.value);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(name, email, password);
+    setLoading(true);
+    try {
+      const { data } = await axios.post(`${API_URL}/register`, formData);
+      toast.success(data.message || "Registration successful!");
+      setTimeout(() => navigate("/login"), 1000);
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Something went wrong. Try again!"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
-  return (
-    <>
-      <div className="auth_main">
-        <form onSubmit={handleSubmit}>
-          <div className="auth_container">
-            <div className="auth_header">
-              <MdOutlineSaveAlt />
-              <p className="auth_heading">Welcome</p>
-              <p className="auth_title">Create a new account</p>
-            </div>
 
-            <div className="auth_input">
-              <label>Name *</label>
+  return (
+    <div className="auth_main">
+      <form onSubmit={handleSubmit}>
+        <div className="auth_container">
+          <div className="auth_header">
+            <MdOutlineSaveAlt />
+            <p className="auth_heading">Welcome</p>
+            <p className="auth_title">Create a new account</p>
+          </div>
+
+          {/* Name Field */}
+          <div className="auth_input">
+            <label>Name *</label>
+            <Input
+              type="text"
+              name="name"
+              placeholder="Enter name"
+              required
+              value={formData.name}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          {/* Email Field */}
+          <div className="auth_input">
+            <label>Email *</label>
+            <Input
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          {/* Password Field with Show/Hide Toggle */}
+          <div className="auth_input">
+            <label>Password *</label>
+            <div className="password_wrapper">
               <Input
-                type={"text"}
-                placeholder={"Enter name"}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Enter password"
                 required
-                onChange={changeName}
+                value={formData.password}
+                onChange={handleInputChange}
               />
-            </div>
-            <div className="auth_input">
-              <label>email *</label>
-              <Input
-                type={"email"}
-                placeholder={"Enter email"}
-                required
-                onChange={changeEmail}
-              />
-            </div>
-            <div className="auth_input">
-              <label>Password *</label>
-              <Input
-                type={"Password"}
-                placeholder={"Enter Password"}
-                required
-                onChange={changePassword}
-              />
-            </div>
-            <div className="auth_action">
-              <Button>Register</Button>
-            </div>
-            <div>
-              <BackToLogin></BackToLogin>
+              <span
+                className="password_toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              </span>
             </div>
           </div>
-        </form>
-      </div>
-    </>
+
+          <div className="auth_action">
+            <Button disabled={loading}>
+              {loading ? <ImSpinner className="loading" /> : "Register"}
+            </Button>
+          </div>
+          <BackToLogin />
+        </div>
+      </form>
+    </div>
   );
 };
 

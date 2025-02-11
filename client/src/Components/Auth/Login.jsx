@@ -34,7 +34,7 @@ const Login = () => {
               type={"email"}
               placeholder={"Enter email"}
               required
-              onChange={change}
+              onChange={changeEmail}
             />
           </div>
           <div className="auth_input">
