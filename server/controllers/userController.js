@@ -2,6 +2,7 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
+
 const registerSchema = Joi.object({
   name: Joi.string()
     .pattern(/^[A-Za-z\s]+$/)
@@ -36,6 +37,7 @@ const registerSchema = Joi.object({
       "any.required": "Password is required.",
     }),
 });
+
 const register = async (req, res) => {
   try {
     const { error } = registerSchema.validate(req.body);
@@ -61,12 +63,31 @@ const register = async (req, res) => {
       password: hashedPassword,
     });
     user.save();
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    res.status(201).json({ message: "User registered successfully", token });
+
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
   }
 };
-module.exports = register;
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(req.body);
+
+    const Email = email.toLowerCase();
+
+    const user = await User.findOne({ email: Email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.json({ token });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+module.exports = { register, login };
